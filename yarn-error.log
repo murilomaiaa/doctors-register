@@ -1,0 +1,42 @@
+Arguments: 
+  /usr/bin/node /usr/share/yarn/bin/yarn.js
+
+PATH: 
+  /opt/firefox/firefox:/home/mrlmaia/.deno/bin:/home/mrlmaia/.zinit/polaris/sbin:/home/mrlmaia/.zinit/polaris/bin:/home/mrlmaia/.zinit/polaris/usr/sbin:/home/mrlmaia/.zinit/polaris/usr/bin:/opt/firefox/firefox:/home/mrlmaia/.deno/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/local/go/bin:/home/mrlmaia/Android/Sdk/emulator:/home/mrlmaia/Android/Sdk/tools:/home/mrlmaia/Android/Sdk/tools/bin:/home/mrlmaia/Android/Sdk/platform-tools:/home/mrlmaia/android-studio/bin: /home/mrlmaia/.yarn/bin:/usr/local/go/bin:/home/mrlmaia/Android/Sdk/emulator:/home/mrlmaia/Android/Sdk/tools:/home/mrlmaia/Android/Sdk/tools/bin:/home/mrlmaia/Android/Sdk/platform-tools:/home/mrlmaia/android-studio/bin: /home/mrlmaia/.yarn/bin
+
+Yarn version: 
+  1.22.5
+
+Node version: 
+  12.20.1
+
+Platform: 
+  linux x64
+
+Trace: 
+  SyntaxError: /home/mrlmaia/entrevistas/gcb/backend/package.json: Unexpected token } in JSON at position 325
+      at JSON.parse (<anonymous>)
+      at /usr/share/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/share/yarn/lib/cli.js:310:30)
+      at /usr/share/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "backend",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "scripts": {
+      "build": "tsc",
+      "dev": "ts-node-dev -r tsconfig-paths/register --inspect --transpile-only --ignore-watch node_modules src/shared/infra/http/app.ts",
+      "start": "/shared/infra/http/app.ts",
+      "test": "jest"
+    },
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
