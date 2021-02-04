@@ -10,10 +10,10 @@
     "baseUrl": "./src",
     "paths": {
       "@modules/*": [
-        "src/modules/*"
+        "modules/*"
       ],
       "@shared/*": [
-        "src/shared/*"
+        "shared/*"
       ],
       "@config/*": [
         "config/*"
