@@ -12,10 +12,11 @@ export default class FakeDoctorsRepository implements IDoctorsRepository {
     const doctor = new Doctor()
 
     Object.assign(doctor, {
-      id: this.nextId,
+      id: String(this.nextId),
       ...data
     })
 
+    this.nextId++
     this.doctors.push(doctor)
 
     return doctor
