@@ -85,7 +85,6 @@ export default class DoctorsController {
     } else {
       _specialties = undefined
     }
-    console.log({ _specialties, specialties })
 
     let address = {
       zipcode: zipcode ? String(zipcode) : undefined,
