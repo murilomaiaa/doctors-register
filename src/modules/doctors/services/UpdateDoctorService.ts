@@ -45,7 +45,7 @@ class UpdateDoctorService {
       throw new AppError(`Unknown specialties ${uncreatedSpecialties.join(', ')}`)
     }
 
-    Object.assign(doctor, { ...data });
+    Object.assign(doctor, { ...data, specialties: [...specialties] });
 
     await this.doctorsRepository.save(doctor);
     return doctor

@@ -46,8 +46,8 @@ describe('UpdateDoctor', () => {
     expect(doctor.name).toEqual(data.name);
     expect(doctor.landline).toEqual('3133333334');
     expect(doctor.crm).toEqual('1111111');
-    expect(doctor.specialties).toContain(specialties[0])
-    expect(doctor.specialties).toContain(specialties[1])
+    expect(doctor.specialties[0].name).toBe(specialties[0])
+    expect(doctor.specialties[1].name).toContain(specialties[1])
   });
 
   it('should not be able to update a non existent doctor', async () => {
