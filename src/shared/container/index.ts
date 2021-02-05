@@ -1,6 +1,6 @@
-import FakeAddressesRepository from "@modules/doctors/repositories/fakes/FakeAddressesRepository";
-import FakeDoctorsRepository from "@modules/doctors/repositories/fakes/FakeDoctorsRepository";
-import FakeSpecialtiesRepository from "@modules/doctors/repositories/fakes/FakeSpecialtiesRepository";
+import AddressesRepository from "@modules/doctors/infra/typeorm/repositories/AddressesRepository";
+import DoctorsRepository from "@modules/doctors/infra/typeorm/repositories/DoctorsRepository";
+import SpecialtiesRepository from "@modules/doctors/infra/typeorm/repositories/SpecialtiesRepository";
 import IAddressesRepository from "@modules/doctors/repositories/IAddressesRepository";
 import IDoctorsRepository from "@modules/doctors/repositories/IDoctorsRepository";
 import ISpecialtiesRepository from "@modules/doctors/repositories/ISpecialtiesRepository";
@@ -8,16 +8,16 @@ import { container } from "tsyringe";
 
 container.registerSingleton<IDoctorsRepository>(
   'DoctorsRepository',
-  FakeDoctorsRepository
+  DoctorsRepository
 )
 
 container.registerSingleton<ISpecialtiesRepository>(
   'SpecialtiesRepository',
-  FakeSpecialtiesRepository,
+  SpecialtiesRepository,
 );
 
 container.registerSingleton<IAddressesRepository>(
   'AddressesRepository',
-  FakeAddressesRepository,
+  AddressesRepository,
 );
 

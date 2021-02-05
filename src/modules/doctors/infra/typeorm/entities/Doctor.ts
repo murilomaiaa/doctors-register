@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import Address from "./Address";
 import Specialty from "./Specialty";
 
@@ -20,7 +20,9 @@ export default class Doctor {
   phone: string;
 
   @ManyToOne(() => Address, { eager: true })
+  @JoinColumn({ name: 'address_id' })
   address: Address;
+
 
   @ManyToMany(() => Specialty, { eager: true })
   @JoinTable({

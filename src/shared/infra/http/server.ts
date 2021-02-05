@@ -8,7 +8,7 @@ import 'express-async-errors';
 import AppError from '@shared/errors/AppError';
 import routes from './routes';
 
-// import '../typeorm';
+import '../typeorm';
 import '@shared/container';
 import { isCelebrateError } from 'celebrate';
 

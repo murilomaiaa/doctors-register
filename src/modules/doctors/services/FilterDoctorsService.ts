@@ -15,6 +15,6 @@ export default class FilterDoctorsService {
       return this.doctorsRepository.findAll();
     }
 
-    return this.doctorsRepository.filter({ ...data });
+    return this.doctorsRepository.filter(data);
   }
 }

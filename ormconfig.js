@@ -7,7 +7,7 @@ module.exports = {
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-
+  logging: ["query"],
   entities: [
     "./src/modules/**/infra/typeorm/entities/*.ts"
   ],
@@ -16,8 +16,5 @@ module.exports = {
   ],
   cli: {
     migrationsDir: "./src/shared/infra/typeorm/migrations"
-  },
-  seeds: [
-    "./src/shared/infra/typeorm/seeds/*.ts"
-  ]
+  }
 }

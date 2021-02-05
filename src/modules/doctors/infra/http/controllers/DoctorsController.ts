@@ -96,6 +96,13 @@ export default class DoctorsController {
       complementary: complementary ? String(complementary) : undefined
     }
 
+    let addressIsDefined = false
+    Object.entries(address).forEach(([key, value]) => {
+      if (value) {
+        addressIsDefined = true
+      }
+    })
+
     const filterDoctors = container.resolve(FilterDoctorsService)
 
     const doctors = await filterDoctors.execute({
@@ -105,7 +112,7 @@ export default class DoctorsController {
       name: name ? String(name) : undefined,
       phone: phone ? String(phone) : undefined,
       specialties: _specialties,
-      address
+      address: addressIsDefined ? address : undefined
     })
 
     return response.json(doctors)
