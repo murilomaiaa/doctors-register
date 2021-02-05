@@ -1,5 +1,4 @@
 import Address from "../infra/typeorm/entities/Address"
-import Specialty from "../infra/typeorm/entities/Specialty"
 
 type UpdateDoctorDTO = {
   id: string
@@ -8,7 +7,7 @@ type UpdateDoctorDTO = {
   landline: string
   phone: string
   address: Address
-  specialties: Specialty[]
+  specialties: string[]
 }
 
 export default UpdateDoctorDTO

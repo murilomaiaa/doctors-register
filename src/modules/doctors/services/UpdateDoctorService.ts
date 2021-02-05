@@ -20,13 +20,14 @@ class UpdateDoctorService {
       data.specialties.filter((specialty, position, arr) =>
         arr.indexOf(specialty) === position
       )
+
     if (specialtiesWithoutDuplications.length < 2) {
       throw new AppError("An doctor must have at least 2 specialties")
     }
 
     const doctor = await this.doctorsRepository.findOne(data.id);
     if (!doctor)
-      throw new AppError('Doctor not found');
+      throw new AppError(`Doctor with id ${data.id} not found`);
 
     const doctorWithGivenCrm = await this.doctorsRepository.findByCrm(data.crm)
     if (doctorWithGivenCrm && doctor.id !== doctorWithGivenCrm.id)
@@ -34,14 +35,13 @@ class UpdateDoctorService {
 
 
     const specialties = await this.specialtiesRepository.findSpecialties(
-      specialtiesWithoutDuplications.map(s => s.name)
+      specialtiesWithoutDuplications
     )
 
     if (specialtiesWithoutDuplications.length !== specialties.length) {
       const uncreatedSpecialties = specialtiesWithoutDuplications.filter(
-        specialty => !specialties.find(s => s.name === specialty.name)
+        specialty => !specialties.find(s => s.name === specialty)
       )
-
       throw new AppError(`Unknown specialties ${uncreatedSpecialties.join(', ')}`)
     }
 

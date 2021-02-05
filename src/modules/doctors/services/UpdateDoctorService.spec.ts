@@ -33,10 +33,7 @@ describe('UpdateDoctor', () => {
       specialties: [new Specialty(), new Specialty()]
     })
 
-    const specialties: Specialty[] = [
-      { id: '3', name: "BUCO MAXILO", createdAt: new Date(), updatedAt: new Date() },
-      { id: '4', name: "CARDIOLOGIA CLÍNICA", createdAt: new Date(), updatedAt: new Date() },
-    ]
+    const specialties = ["BUCO MAXILO", "CARDIOLOGIA CLÍNICA"]
 
     doctor = await updatePerson.execute({
       ...doctor,
@@ -58,7 +55,7 @@ describe('UpdateDoctor', () => {
       updatePerson.execute({
         id: '1',
         ...data,
-        specialties: [new Specialty(), new Specialty()]
+        specialties: ["CARDIOLOGIA CLÍNICA", "CIRURGIA CARDÍACA"]
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -78,7 +75,8 @@ describe('UpdateDoctor', () => {
     await expect(
       updatePerson.execute({
         ...doctor,
-        crm: data.crm
+        crm: data.crm,
+        specialties: doctor.specialties.map(s => s.name)
       }),
     ).rejects.toBeInstanceOf(AppError);
   })
@@ -92,7 +90,7 @@ describe('UpdateDoctor', () => {
     await expect(
       updatePerson.execute({
         ...doctor,
-        specialties: [new Specialty()]
+        specialties: [""]
       }),
     ).rejects.toBeInstanceOf(AppError);
   })
@@ -106,10 +104,7 @@ describe('UpdateDoctor', () => {
     await expect(
       updatePerson.execute({
         ...doctor,
-        specialties: [
-          { id: '4', name: "CARDIOLOGIA CLÍNICA", createdAt: new Date(), updatedAt: new Date() },
-          { id: '0', name: "non created", createdAt: new Date(), updatedAt: new Date() }
-        ]
+        specialties: ["CARDIOLOGIA CLÍNICA", "non created"]
       })
     ).rejects.toBeInstanceOf(AppError)
   })
