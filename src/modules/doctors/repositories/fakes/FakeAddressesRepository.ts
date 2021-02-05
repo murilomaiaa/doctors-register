@@ -1,9 +1,12 @@
+import CreateAddressDTO from "@modules/doctors/dtos/CreateAddressDTO";
 import FindAddressDTO from "@modules/doctors/dtos/FindAddressDTO";
 import Address from "@modules/doctors/infra/typeorm/entities/Address";
 import IAddressesRepository from "../IAddressesRepository";
 
 export default class FakeAddressesRepository implements IAddressesRepository {
   private addresses: Address[] = []
+
+  private nextId = 1
 
   public async findOne(data: FindAddressDTO): Promise<Address | undefined> {
     if (typeof data === 'string') {
@@ -15,4 +18,20 @@ export default class FakeAddressesRepository implements IAddressesRepository {
       );
     }
   }
+
+  public async create(data: CreateAddressDTO): Promise<Address> {
+    const address = new Address();
+
+    Object.assign(address, {
+      id: String(this.nextId),
+      ...data,
+    });
+
+    this.nextId++;
+
+    this.addresses.push(address);
+
+    return address;
+  }
+
 }

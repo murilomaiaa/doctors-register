@@ -1,7 +1,7 @@
-type FindAddressDTO = string | {
+type FindAddressDTO = {
   zipcode: string;
   number: string;
-  complementary: string;
+  complementary?: string;
 }
 
 export default FindAddressDTO;
