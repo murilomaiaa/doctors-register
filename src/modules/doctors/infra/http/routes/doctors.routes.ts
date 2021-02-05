@@ -19,7 +19,8 @@ doctorsRouter.post(
         city: Joi.string().required(),
         neighborhood: Joi.string().required(),
         street: Joi.string().required(),
-        number: Joi.string().required()
+        number: Joi.string().required(),
+        complementary: Joi.string()
       }),
       specialties: Joi.array().items(Joi.string()).required()
     }
