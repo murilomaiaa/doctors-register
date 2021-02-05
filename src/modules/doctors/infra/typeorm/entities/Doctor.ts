@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import Address from "./Address";
 import Specialty from "./Specialty";
 
@@ -19,7 +19,7 @@ export default class Doctor {
   @Column({ type: 'varchar', precision: 11 })
   phone: string;
 
-  @OneToOne(() => Address, { eager: true })
+  @ManyToOne(() => Address, { eager: true })
   address: Address;
 
   @ManyToMany(() => Specialty, { eager: true })

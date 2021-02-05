@@ -10,7 +10,7 @@ type Address = {
 
 type Specialty = string
 
-type FilterDoctorsDTO = {
+type RepositoryFilterDoctorsDTO = {
   id?: string
   name?: string
   crm?: string
@@ -19,4 +19,5 @@ type FilterDoctorsDTO = {
   address?: Address
   specialties?: Specialty[]
 }
-export default FilterDoctorsDTO
+
+export default RepositoryFilterDoctorsDTO
