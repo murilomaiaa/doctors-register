@@ -6,11 +6,11 @@ import express, { Request, Response, NextFunction } from 'express';
 import 'express-async-errors';
 
 import AppError from '@shared/errors/AppError';
-// import { isCelebrateError } from 'celebrate';
 import routes from './routes';
 
 // import '../typeorm';
 import '@shared/container';
+import { isCelebrateError } from 'celebrate';
 
 const app = express();
 
@@ -33,6 +33,19 @@ app.use((error: Error, _: Request, response: Response, __: NextFunction) => {
     return response.status(statusCode).json({
       status: 'error',
       message: error.message
+    });
+  }
+
+  if (isCelebrateError(error)) {
+    const values = error.details.values();
+    let { message } = values.next().value.details[0];
+    message = message.replace(`"`, ``).replace(`"`, ``);
+
+
+    return response.status(400).json({
+      status: 'error',
+      type: 'validation',
+      message,
     });
   }
 
