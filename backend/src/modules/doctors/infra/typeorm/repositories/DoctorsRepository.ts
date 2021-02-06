@@ -45,6 +45,7 @@ export default class DoctorsRepository implements IDoctorsRepository {
     specialties,
     ...rest
   }: RepositoryFilterDoctorsDTO): Promise<Doctor[]> {
+    console.log(specialties)
     const filter: Record<string, unknown> = {}
     Object.entries(rest).forEach(([key, value]) => {
       if (value) {
@@ -52,17 +53,49 @@ export default class DoctorsRepository implements IDoctorsRepository {
       }
     })
 
-    // if (address) {
-    //   Object.entries(address).forEach(([key, value]) => {
-    //     if (value) {
-    //       filter[key] = value
-    //     }
-    //   })
-    // }
+    if (!address && !specialties) {
+      return this.ormRepository.find(filter)
+    }
 
-    // if (!address && !specialties) {
-    return this.ormRepository.find(filter)
-    // }
+    if (!specialties && address) {
+      let addressFilter = ''
+
+      Object.entries(address).forEach(([key, value]) => {
+        if (value) {
+          addressFilter += `a.${key} = '${value}'`
+        }
+      })
+
+      return this.ormRepository
+        .createQueryBuilder('d')
+        .select()
+        .innerJoinAndSelect('d.specialties', 's')
+        .innerJoinAndSelect('d.address', 'a')
+        .where(filter)
+        .andWhere(addressFilter)
+        .getMany()
+    }
+
+    const doctors = await this.ormRepository
+      .createQueryBuilder('d')
+      .select()
+      .innerJoinAndSelect('d.specialties', 's')
+      .innerJoinAndSelect('d.address', 'a')
+      .where(filter)
+      .getMany()
+
+    const specialtiesFilter = (doctorSpecialties: Specialty[]) => {
+      if (!specialties) return true;
+      const specialtiesNames = doctorSpecialties.map(s => s.name);
+      for (let i = 0; i < specialties.length; i++) {
+        if (specialtiesNames.indexOf(specialties[i]) === -1) {
+          return false
+        }
+      }
+      return true;
+    }
+
+    return doctors.filter(doctor => specialtiesFilter(doctor.specialties))
   }
 
   public async delete(doctor: Doctor): Promise<void> {

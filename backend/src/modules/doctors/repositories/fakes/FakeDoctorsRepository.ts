@@ -58,15 +58,13 @@ export default class FakeDoctorsRepository implements IDoctorsRepository {
 
       const specialtiesNames = doctorSpecialties.map(s => s.name);
 
-
-      let foundAllSpecialties = true
-      specialties.forEach(specialty => {
-        if (specialtiesNames.indexOf(specialty) === -1) {
-          foundAllSpecialties = false;
+      for (let i = 0; i < specialties.length; i++) {
+        if (specialtiesNames.indexOf(specialties[i]) === -1) {
+          return false
         }
-      })
+      }
 
-      return foundAllSpecialties;
+      return true;
     }
 
     const addressFilter = (doctorAddress: Address) => {
