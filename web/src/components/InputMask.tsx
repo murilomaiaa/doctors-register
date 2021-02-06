@@ -45,7 +45,7 @@ const InputMask = ({ name, label, customLabel, formControlProps, placeholder, di
           ? (customLabel)
           : (<FormLabel htmlFor={fieldName} _disabled={{ color: 'gray.700' }}>{label}</FormLabel>)
         }
-        <ReactInputMask ref={inputRef} defaultValue={defaultValue} maskChar={null} {...rest}>
+        <ReactInputMask ref={inputRef} defaultValue={defaultValue} {...rest}>
           {() => (
             <Input
               id={fieldName}

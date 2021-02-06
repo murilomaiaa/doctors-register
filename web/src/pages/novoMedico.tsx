@@ -32,10 +32,7 @@ type FormData = Record<string, unknown>
 // }
 
 type Props = {
-  specialties: Array<{
-    id: string
-    name: string
-  }>
+  specialties: string[]
 }
 
 const NovoMedico = ({ specialties }: Props) => {
@@ -63,12 +60,18 @@ const NovoMedico = ({ specialties }: Props) => {
   }, [])
   const findAddress = useCallback(async (e: FocusEvent<HTMLInputElement> | ChangeEvent<HTMLInputElement>) => {
     try {
-      const zipcode = e.target.value.replace('-', '')
-      if (zipcode.length !== 8) {
+      setCepFound(false)
+      console.log(e.target.value)
+      const zipcode = e.target.value.replaceAll('_', '').replace('-', '')
+      if (zipcode.length < 8) {
+        formRef.current.setFieldError('address.zipcode', null)
         return
       }
+
       if (cepFound) return
-      const address = cep(zipcode)
+      // const address = await cep(zipcode)
+      const { data } = await api.get<AddressApi>(zipcode, { baseURL: 'https://brasilapi.com.br/api/cep/v1/' })
+      const address = data
       if (!address.neighborhood) address.neighborhood = 'S/B'
       setAddress({ ...address, zipcode: address.cep, number: '' })
       const formData = formRef.current.getData()
@@ -111,7 +114,7 @@ const NovoMedico = ({ specialties }: Props) => {
                 flex="1"
               >
                 {specialties.map(s => (
-                  <option value={s}>{s}</option>
+                  <option key={`option-${s}`} value={s}>{s}</option>
                 ))}
               </Select>
               {index > 1 &&
@@ -142,13 +145,8 @@ const NovoMedico = ({ specialties }: Props) => {
             label="CEP"
             name="zipcode"
             placeholder="Informe o cep"
-            onBlur={findAddress}
             formControlProps={{ pr: 2, maxW: "50%" }}
-            onChange={e => {
-              setCepFound(false)
-              if (e.target.value.length < 9) formRef.current.setFieldError('address.zipcode', null)
-              if (e.target.value.length === 9) findAddress(e)
-            }}
+            onChange={findAddress}
           />
           {cepFound && (
             <Text ml={2} mb={2} fontSize="sm" alignSelf="flex-end">{address.city}/{address.state}</Text>
@@ -185,10 +183,9 @@ const NovoMedico = ({ specialties }: Props) => {
               hidden={!cepFound}
             >
               Sem número
-                </Checkbox>
+            </Checkbox>
 
             <Input
-              label="Complemento"
               name="complementary"
               mb={4}
               defaultValue={address.complementary}
