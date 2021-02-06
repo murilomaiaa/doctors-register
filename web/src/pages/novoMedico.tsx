@@ -1,4 +1,4 @@
-import { Button, Checkbox, Container, Flex, FormLabel, Heading, Text, toast, useToast } from "@chakra-ui/react";
+import { Button, Checkbox, Container, Flex, FormLabel, Grid, GridItem, Heading, Text, toast, useToast } from "@chakra-ui/react";
 import { FormHandles, Scope } from '@unform/core'
 import { Form } from '@unform/web'
 import { GetServerSideProps } from "next";
@@ -153,58 +153,77 @@ const NovoMedico = ({ specialties }: Props) => {
 
   return (<>
     <Header />
-    <Container maxW="600px" mx='auto' my={10}>
+    <Container maxW="720px" mx='auto' my={10}>
       <Form onSubmit={handleSubmit} ref={formRef}>
         <Heading size="lg">Cadastrar novo médico</Heading>
-        <Input name="name" label="Nome completo" />
-        <InputMask
-          name="crm"
-          mask="99.999.99"
-          label="CRM"
-        />
-        <InputMask
-          mask="(99) 9999-9999"
-          label="Telefone fixo"
-          name="landline"
-        />
-        <InputMask
-          mask="(99) 99999-9999"
-          label="Celular"
-          name="phone"
-        />
-        <FormLabel>Especialidades médicas</FormLabel>
+        <Grid
+          templateColumns={{ base: 'repeat(4,1fr)', md: 'repeat(8,1fr)' }}
+          gap={4}
+        >
+          <GridItem colSpan={{ base: 4 }}>
+            <Input name="name" label="Nome completo" />
+          </GridItem>
+          <GridItem colSpan={{ base: 4 }}>
+            <InputMask
+              name="crm"
+              mask="99.999.99"
+              label="CRM"
+            />
+          </GridItem>
+          <GridItem colSpan={{ base: 4 }}>
+            <InputMask
+              mask="(99) 9999-9999"
+              label="Telefone fixo"
+              name="landline"
+            />
+          </GridItem>
+          <GridItem colSpan={{ base: 4 }}>
+            <InputMask
+              mask="(99) 99999-9999"
+              label="Celular"
+              name="phone"
+            />
+          </GridItem>
+        </Grid>
         <Scope path="specialties">
-          {doctorSpecialties.map((specialty, index) => (<>
-            <Flex key={`flex-${index}`}>
-              <Select
-                name={`${index}`}
-                label={`Especialidade ${index + 1}`}
-                flex="1"
-              >
-                {specialties.map(s => (
-                  <option key={`option-${s}`} value={s}>{s}</option>
-                ))}
-              </Select>
-              {index > 1 &&
-                <Button
-                  colorScheme="red"
-                  ml={4}
-                  alignSelf="flex-end"
-                  onClick={() => handleDeleteSelect(index)}
-                >-</Button>
-              }
-            </Flex>
-          </>))}
-          <Flex w="100%" flexDir="row-reverse" mt={4}>
-            <Button
-              colorScheme="green"
-              ml={4}
-              onClick={handleAddSelect}
-            >+</Button>
-          </Flex>
+          <Heading size="md" my={4}>Especialidades médicas</Heading>
+          <Grid
+            templateColumns={{ base: 'repeat(4,1fr)', md: 'repeat(8,1fr)' }}
+            gap={4}
+          >
+            {doctorSpecialties.map((specialty, index) => (
+              <GridItem colSpan={4} key={`-${index}`}>
+                <Flex >
+                  <Select
+                    name={`${index}`}
+                    label={`Especialidade ${index + 1}`}
+                    flex="1"
+                  >
+                    {specialties.map(s => (
+                      <option key={`option-${s}`} value={s}>{s}</option>
+                    ))}
+                  </Select>
+                  {index > 1 &&
+                    <Button
+                      colorScheme="red"
+                      ml={4}
+                      alignSelf="flex-end"
+                      onClick={() => handleDeleteSelect(index)}
+                    >-</Button>
+                  }
+                </Flex>
+              </GridItem>
+            ))}
+            <GridItem colSpan={{ base: 4, md: 8 }}>
+              <Button
+                colorScheme="green"
+                onClick={handleAddSelect}
+              >Adicionar especialidade</Button>
+            </GridItem>
+          </Grid>
         </Scope>
         <Scope path="address">
-          <Heading mb={3} size="md">
+          <Heading my={3} size="md">
             Endereço
           </Heading>
 
