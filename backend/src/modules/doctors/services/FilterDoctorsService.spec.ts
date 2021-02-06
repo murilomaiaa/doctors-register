@@ -39,7 +39,7 @@ const data = {
   specialties: [specialties[0], specialties[1]]
 }
 
-describe('FindFilteredRooms', () => {
+describe('FindFilteredDoctors', () => {
   beforeEach(() => {
     fakeDoctorsRepository = new FakeDoctorsRepository();
     filterDoctors = new FilterDoctorsService(fakeDoctorsRepository);
