@@ -1,6 +1,1 @@
-node_modules
-dist
-coverage
-
-tmp/*
-!tmp/default-image-profile.png
+todo.md
