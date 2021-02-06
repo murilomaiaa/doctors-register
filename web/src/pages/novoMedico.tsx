@@ -1,12 +1,14 @@
-import { Button, Checkbox, Container, Flex, FormLabel, Heading, Text } from "@chakra-ui/react";
+import { Button, Checkbox, Container, Flex, FormLabel, Heading, Text, toast, useToast } from "@chakra-ui/react";
 import { FormHandles, Scope } from '@unform/core'
 import { Form } from '@unform/web'
 import { GetServerSideProps } from "next";
 import { ChangeEvent, FocusEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Header, Input, InputMask, Select } from "../components";
 import api from "../services/api";
-import cep from 'cep-promise'
-
+import * as Yup from 'yup'
+import { isSchema } from "yup";
+import { useRouter } from "next/dist/client/router";
+import getValidationErrors from "../utils/getValidationErrors";
 type Address = {
   zipcode: string
   state: string
@@ -21,15 +23,14 @@ type AddressApi = Omit<Address, 'zipcode'> & {
   cep: string
 }
 
-type FormData = Record<string, unknown>
-//  {
-//   name: string
-//   crm: string
-//   landline: string
-//   phone: string
-//   specialties
-
-// }
+type FormData = {
+  name: string
+  crm: string
+  landline: string
+  phone: string
+  specialties: string[]
+  address: Address
+}
 
 type Props = {
   specialties: string[]
@@ -39,9 +40,20 @@ const NovoMedico = ({ specialties }: Props) => {
   const formRef = useRef<FormHandles>(null)
   const [doctorSpecialties, setDoctorSpecialties] = useState<string[]>([undefined, undefined])
 
+  const router = useRouter()
+  const toast = useToast()
+
   const [cepFound, setCepFound] = useState(false)
   const [address, setAddress] = useState({} as Address)
   const [hasNumber, setHasNumber] = useState(true)
+  useEffect(() => {
+    if (hasNumber) {
+      formRef.current.setFieldValue('address.number', '')
+    } else {
+      formRef.current.setFieldValue('address.number', 'S/N')
+    }
+  }, [hasNumber])
+
 
   const handleAddSelect = useCallback(() => {
     setDoctorSpecialties(ds => [...ds, undefined])
@@ -53,11 +65,67 @@ const NovoMedico = ({ specialties }: Props) => {
 
   const handleSubmit = useCallback(async (data: FormData) => {
     try {
-      await api.post('/doctors', data)
-    } catch {
+      console.log({ data })
+      formRef.current?.setErrors({});
+      console.log("here")
+      const addressSchema = Yup.object().shape({
+        zipcode: Yup.string().required('Informe um CEP').length(9, 'Informe um CEP válido'),
+        neighborhood: Yup.string().required('Informe um bairro'),
+        street: Yup.string().required('Informe uma rua'),
+        number: Yup.string().required('Informe um número')
+      })
+
+      const schema = Yup.object().shape({
+        name: Yup.string().required('Informe o seu nome').matches(/^[ a-zA-ZÀ-ÿ\u00f1\u00d1]*$/g, 'Insira apenas letras'),
+        crm: Yup.string().required('Informe um CRM'),
+        landline: Yup.string()
+          .length(14, 'Digite m telefone válido')
+          .required('Informe um telefone'),
+        phone: Yup.string()
+          .min(14, 'Digite um telefone válido')
+          .max(15, 'Digite um telefone válido'),
+        address: addressSchema
+      })
+      await schema.validate(data, { abortEarly: false })
+
+      const apiRequestBody: FormData = {
+        name: data.name,
+        crm: data.crm.replaceAll('.', ''),
+        landline: data.landline.replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
+        phone: data.landline.replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
+        specialties: data.specialties,
+        address: {
+          ...data.address,
+          zipcode: data.address.zipcode.replace('-', ''),
+          city: address.city,
+          state: address.state
+        }
+      }
+      await api.post('/doctors', apiRequestBody)
+      toast({
+        isClosable: true,
+        position: 'top-right',
+        status: 'success',
+        title: 'Médico cadastrado com sucesso',
+      })
+      router.push('/')
+    } catch (error) {
+      console.log('err')
+      if (error instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(error);
+        console.log({ error, errors })
+        formRef.current?.setErrors(errors);
+      } else {
+        toast({
+          isClosable: true,
+          position: 'top-right',
+          status: 'error',
+          title: 'Ocorreu um erro ao cadastrar médico'
+        })
+      }
 
     }
-  }, [])
+  }, [address.city, address.state, toast, router])
   const findAddress = useCallback(async (e: FocusEvent<HTMLInputElement> | ChangeEvent<HTMLInputElement>) => {
     try {
       setCepFound(false)
@@ -97,7 +165,7 @@ const NovoMedico = ({ specialties }: Props) => {
         <InputMask
           mask="(99) 9999-9999"
           label="Telefone fixo"
-          name="phone"
+          name="landline"
         />
         <InputMask
           mask="(99) 99999-9999"
@@ -195,6 +263,7 @@ const NovoMedico = ({ specialties }: Props) => {
           </>
           }
         </Scope>
+        <Button type="submit" variant="solid" colorScheme="green">Criar</Button>
       </Form>
     </Container>
   </>)
