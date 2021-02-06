@@ -20,7 +20,7 @@ doctorsRouter.post(
         neighborhood: Joi.string().required(),
         street: Joi.string().required(),
         number: Joi.string().required(),
-        complementary: Joi.string()
+        complementary: Joi.string().allow('')
       }),
       specialties: Joi.array().items(Joi.string()).required()
     }
@@ -42,7 +42,8 @@ doctorsRouter.put(
         city: Joi.string().required(),
         neighborhood: Joi.string().required(),
         street: Joi.string().required(),
-        number: Joi.string().required()
+        number: Joi.string().required(),
+        complementary: Joi.string().allow('')
       }),
       specialties: Joi.array().items(Joi.string()).required()
     }
