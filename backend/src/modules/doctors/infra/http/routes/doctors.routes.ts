@@ -50,26 +50,6 @@ doctorsRouter.put(
   doctorsController.update
 )
 doctorsRouter.delete('/:id', doctorsController.delete)
-doctorsRouter.get(
-  '/',
-  celebrate({
-    query: {
-      id: Joi.string(),
-      crm: Joi.string(),
-      landline: Joi.string(),
-      phone: Joi.string(),
-      name: Joi.string(),
-      specialties: Joi.string(),
-      zipcode: Joi.string(),
-      state: Joi.string(),
-      city: Joi.string(),
-      neighborhood: Joi.string(),
-      street: Joi.string(),
-      number: Joi.string(),
-      complementary: Joi.string()
-    }
-  }),
-  doctorsController.filter
-)
+doctorsRouter.get('/', doctorsController.filter)
 
 export default doctorsRouter

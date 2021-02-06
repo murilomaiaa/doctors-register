@@ -12,4 +12,8 @@ export default class SpecialtiesRepository implements ISpecialtiesRepository {
   public async findSpecialties(names: string[]): Promise<Specialty[]> {
     return this.ormRepository.find({ where: { name: In(names) } })
   }
+
+  public async findAll(): Promise<Specialty[]> {
+    return this.ormRepository.find()
+  }
 }

@@ -16,4 +16,8 @@ export default class FakeSpecialtiesRepository implements ISpecialtiesRepository
   public async findSpecialties(names: string[]): Promise<Specialty[]> {
     return this.specialties.filter(specialty => names.includes(specialty.name))
   }
+
+  public async findAll(): Promise<Specialty[]> {
+    return this.specialties
+  }
 }
