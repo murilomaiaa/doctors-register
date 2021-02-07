@@ -38,6 +38,7 @@ type Props = {
 
 const NovoMedico = ({ specialties }: Props) => {
   const formRef = useRef<FormHandles>(null)
+  const specialtiesRef = useRef()
   const [doctorSpecialties, setDoctorSpecialties] = useState<string[]>([undefined, undefined])
 
   const router = useRouter()
@@ -65,34 +66,49 @@ const NovoMedico = ({ specialties }: Props) => {
 
   const handleSubmit = useCallback(async (data: FormData) => {
     try {
-      console.log({ data })
       formRef.current?.setErrors({});
-      console.log("here")
       const addressSchema = Yup.object().shape({
-        zipcode: Yup.string().required('Informe um CEP').length(9, 'Informe um CEP válido'),
+        zipcode: Yup.string().required('Informe um CEP').length(8, 'Informe um CEP válido'),
         neighborhood: Yup.string().required('Informe um bairro'),
         street: Yup.string().required('Informe uma rua'),
         number: Yup.string().required('Informe um número')
       })
 
+      // Yup.addMethod(Yup.object, 'unique', function (message) {
+      //   return this.test('unique', message,);
+      // });
+
       const schema = Yup.object().shape({
         name: Yup.string().required('Informe o seu nome').matches(/^[ a-zA-ZÀ-ÿ\u00f1\u00d1]*$/g, 'Insira apenas letras'),
-        crm: Yup.string().required('Informe um CRM'),
+        crm: Yup.string().required('Informe um CRM').length(7, 'Informe um CRM válido'),
         landline: Yup.string()
-          .length(14, 'Digite m telefone válido')
+          .length(10, 'Digite m telefone válido')
           .required('Informe um telefone'),
         phone: Yup.string()
-          .min(14, 'Digite um telefone válido')
-          .max(15, 'Digite um telefone válido'),
-        address: addressSchema
+          .min(10, 'Digite um telefone válido')
+          .max(11, 'Digite um telefone válido'),
+        address: addressSchema,
+        specialties: Yup.array().test('unique', 'Especialidades não podem ser repetidas', list => {
+          return list.length === new Set(list.map(s => s)).size
+        })
+        // .unique('Especialidades não podem ser repetidas')
       })
-      await schema.validate(data, { abortEarly: false })
 
       const apiRequestBody: FormData = {
         name: data.name,
-        crm: data.crm.replaceAll('.', ''),
-        landline: data.landline.replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
-        phone: data.landline.replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
+        crm: data.crm.replaceAll('.', '').replaceAll('_', ''),
+        landline: data.landline
+          .replace('(', '')
+          .replace(')', '')
+          .replace(' ', '')
+          .replace('-', '')
+          .replaceAll('_', ''),
+        phone: data.landline
+          .replace('(', '')
+          .replace(')', '')
+          .replace(' ', '')
+          .replace('-', '')
+          .replaceAll('_', ''),
         specialties: data.specialties,
         address: {
           ...data.address,
@@ -101,6 +117,7 @@ const NovoMedico = ({ specialties }: Props) => {
           state: address.state
         }
       }
+      await schema.validate(apiRequestBody, { abortEarly: false })
       await api.post('/doctors', apiRequestBody)
       toast({
         isClosable: true,
@@ -110,12 +127,22 @@ const NovoMedico = ({ specialties }: Props) => {
       })
       router.push('/')
     } catch (error) {
-      console.log('err')
+      console.log(data)
       if (error instanceof Yup.ValidationError) {
         const errors = getValidationErrors(error);
-        console.log({ error, errors })
         formRef.current?.setErrors(errors);
+        console.log({ errors })
+        if (errors.specialties) {
+          toast({
+            isClosable: true,
+            position: 'top-right',
+            status: 'error',
+            title: 'Ocorreu um erro ao cadastrar médico',
+            description: 'Especialidades não podem ser repetidas'
+          })
+        }
       } else {
+        console.log({ error })
         toast({
           isClosable: true,
           position: 'top-right',
@@ -123,9 +150,8 @@ const NovoMedico = ({ specialties }: Props) => {
           title: 'Ocorreu um erro ao cadastrar médico'
         })
       }
-
     }
-  }, [address.city, address.state, toast, router])
+  }, [address.city, address.state, toast, router, doctorSpecialties])
   const findAddress = useCallback(async (e: FocusEvent<HTMLInputElement> | ChangeEvent<HTMLInputElement>) => {
     try {
       setCepFound(false)
