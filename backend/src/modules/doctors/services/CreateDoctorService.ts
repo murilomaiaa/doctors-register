@@ -10,10 +10,8 @@ class CreateDoctorService {
   constructor(
     @inject('DoctorsRepository')
     private doctorsRepository: IDoctorsRepository,
-
     @inject('SpecialtiesRepository')
     private specialtiesRepository: ISpecialtiesRepository,
-
   ) { }
 
   public async execute(data: CreateDoctorsDTO): Promise<Doctor> {
